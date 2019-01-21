@@ -9,14 +9,12 @@ def lambda_handler(event, context):
     BODY_HTML = """<html>
         <head></head>
         <body>
-        <h1>Amazon SES Test (SDK for Python)</h1>
-        <p>This email was sent with
-            <a href='https://aws.amazon.com/ses/'>Amazon SES</a> using the
-            <a href='https://aws.amazon.com/sdk-for-python/'>
-            AWS SDK for Python (Boto)</a>.</p>
+        <h1>%s has sent you a message</h1>
+        <p>Message: %s</p>
+        <p>From: %s</p>
         </body>
         </html>
-            """
+            """ % (event['name'], event['message'], event['email'])
     BODY_TEXT = 'name: ' + event['name'] + '\nemail: ' + event['email'] + '\nmessage: ' + event['message']
     client = boto3.client('ses')
     CHARSET = 'UTF-8'
