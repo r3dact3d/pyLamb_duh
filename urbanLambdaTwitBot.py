@@ -4,6 +4,7 @@ import requests
 import tweepy
 import os
 import boto3
+import lxml
 from bs4 import BeautifulSoup
 
 url = 'http://www.urbandictionary.com/'
