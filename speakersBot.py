@@ -1,16 +1,30 @@
 import tweepy
-from config import *
+import os
+import boto3
 
 ### Global Vars
 techWords = ['redhat', 'red hat', 'kubernetes', 'ansible', 'tech', 'hacker', 'opensource', 'data science', 'pipeline', 'sysops', 'devops', 'automation']
 query = '"call for speakers" OR "submit your talk" -filter:retweets'
 
 # Set up OAuth and integrate with API
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+accessToken = os.getenv("ACCESS_TOKEN")
+accessTokenSecret = os.getenv("ACCESS_TOKEN_SECRET")
+consumerKey = os.getenv("CONSUMER_KEY")
+consumerSecret = os.getenv("CONSUMER_SECRET")
+oauthParams = [accessToken, accessTokenSecret, consumerKey, consumerSecret]
+
+ssm = boto3.client('ssm')
+result = ssm.get_parameters(Names=oauthParams, WithDecryption=True)
+
+if result['InvalidParameters']:
+    raise RuntimeError('Could not find OAuth params containing Twitter API Keys: {}'.format(oauthParams))
+param_lookup = {param['Name']: param['Value'] for param in result['Parameters']}   
+
+auth = tweepy.OAuthHandler(param_lookup[consumerKey], param_lookup[consumerSecret])
+auth.set_access_token(param_lookup[accessToken], param_lookup[accessTokenSecret])
 api = tweepy.API(auth)
 
-def findTweet(techWords, query):
+def findTweet(techWords, query, api):
 #    for tweet in tweepy.Cursor(api.search, q=query, lang='en', geocode='32.7078750,-96.9209130,100km').items(10):
     for tweet in tweepy.Cursor(api.search, q=query, lang='en', tweet_mode='extended').items(10):
         try:
@@ -26,6 +40,6 @@ def findTweet(techWords, query):
                     except tweepy.TweepError as e:
                         print("\tAlready Retweeted" + text)
 
-
-findTweet(techWords, query)
+def lambda_handler(event, context):
+    findTweet(techWords, query, api)
 
