@@ -3,8 +3,8 @@ import json
 from botocore.exceptions import ClientError
 
 def lambda_handler(event, context):
-    RECEIVER = 'brady.thompson@gmail.com'
-    SENDER = 'brady.thompson@gmail.com'
+    RECEIVER = 'me@home.com'
+    SENDER = 'me@home.com'
     SUBJECT = 'Website Referral Form: ' + event['name']
     BODY_HTML = """<html>
         <head></head>
