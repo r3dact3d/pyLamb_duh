@@ -1,14 +1,35 @@
-name: Continuous Deployment of Lambda
-on:
-  push:
-    branches:
-      - master
+workflow "Deployment" {
+  on = "push"
+  resolves = [
+    "Build Notification",
+    "Deploy Notification",
+  ]
+}
 
-jobs:
-  deploy-lambda:
-    name: Deploy Lambda
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test AWS CLI
-        #uses: actions/aws/cli@master
-        run: aws --version
+action "Build" {
+  uses = "apex/actions/aws/sam@master"
+  secrets = ["AWS_SECRET_ACCESS_KEY", "AWS_ACCESS_KEY_ID"]
+  args = "package --template-file template.yml --output-template-file out.yml --s3-bucket my-bucket-name"
+}
+
+action "Build Notification" {
+  needs = "Build"
+  uses = "apex/actions/slack@master"
+  secrets = ["SLACK_WEBHOOK_URL"]
+}
+
+action "Deploy" {
+  uses = "apex/actions/aws/sam@master"
+  needs = ["Build"]
+  secrets = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
+  args = "deploy --stack-name myapp --capabilities CAPABILITY_IAM --template-file out.yml"
+  env = {
+    AWS_DEFAULT_REGION = "us-west-2"
+  }
+}
+
+action "Deploy Notification" {
+  uses = "apex/actions/slack@master"
+  needs = ["Deploy"]
+  secrets = ["SLACK_WEBHOOK_URL"]
+}
