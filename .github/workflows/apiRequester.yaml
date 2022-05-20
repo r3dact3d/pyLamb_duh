@@ -15,4 +15,5 @@ jobs:
     - uses: actions/checkout@main
     - name: Test API
       run: |
+        python -m pip install requests
         python aprsfiBasic.py '{{ secrets.apiKey }}'
