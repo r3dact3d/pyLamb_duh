@@ -16,7 +16,7 @@ url = 'https://api.aprs.fi/api/get'
 request = requests.get(url, params=payload)
 
 if request:
-    result = request.content['result']
+    result = request.json()['result']
     if result == 'ok':
         print(result['entries'])
     else:
