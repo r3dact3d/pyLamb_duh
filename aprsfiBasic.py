@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+e!/usr/bin/env python
 # written by brady [r3dact3d]
 import requests
 from sys import argv
@@ -16,9 +16,9 @@ url = 'https://api.aprs.fi/api/get'
 request = requests.get(url, params=payload)
 
 if request:
-    result = request.json()['result']
-    if result == 'ok':
-        print(result)
+    result = request.json()
+    if result['result'] == 'ok':
+        print(result['entries'])
     else:
         print(result)
 else:
