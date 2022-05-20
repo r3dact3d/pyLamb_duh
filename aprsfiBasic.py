@@ -18,7 +18,7 @@ request = requests.get(url, params=payload)
 if request:
     result = request.json()['result']
     if result == 'ok':
-        print(result['entries'])
+        print(result)
     else:
         print(result)
 else:
