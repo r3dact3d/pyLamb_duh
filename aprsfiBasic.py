@@ -1,4 +1,4 @@
-e!/usr/bin/env python
+#!/usr/bin/env python
 # written by brady [r3dact3d]
 import requests
 from sys import argv
