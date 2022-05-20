@@ -16,6 +16,10 @@ url = 'https://api.aprs.fi/api/get'
 request = requests.get(url, params=payload)
 
 if request:
-    print(request.content)
+    result = request.content['result']
+    if result == 'ok':
+        print(result['entries'])
+    else:
+        print(result)
 else:
     print('An error has occured with the request.')
