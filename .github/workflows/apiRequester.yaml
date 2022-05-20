@@ -2,7 +2,7 @@ name: API Requester
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
     paths:
       - 'aprsfiBasic.py'
   workflow_dispatch:
